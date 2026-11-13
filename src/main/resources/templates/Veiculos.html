@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de veículos</title>
+</head>
+<body>
+    <h1>Lista de veículos</h1>
+
+    <form th:action="@{/veiculos}" method="get">
+        <input type="text" name="busca" placeholder="Buscar por modelo">
+        <button type="submit">Buscar</button>
+    </form>
+
+    <a th:href="@{/veiculos/novo}">Novo veículo</a>
+    <br><br>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Modelo</th>
+                <th>Placa</th>
+                <th>Ano</th>
+                <th>Cor</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="veiculo : ${veiculos}">
+                <td th:text="${veiculo.id}"></td>
+                <td th:text="${veiculo.modelo}"></td>
+                <td th:text="${veiculo.placa}"></td>
+                <td th:text="${veiculo.ano}"></td>
+                <td th:text="${veiculo.cor}"></td>
+                <td>
+                    <a th:href="@{/veiculos/editar/{id}(id=${veiculo.id})}">Editar</a>
+                    <form th:action="@{/veiculos/excluir/{id}(id=${veiculo.id})}"
+                          method="post" style="display:inline">
+                        <button type="submit">Excluir</button>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p th:if="${#lists.isEmpty(veiculos)}">Nenhum veículo cadastrado.</p>
+</body>
+</html>
