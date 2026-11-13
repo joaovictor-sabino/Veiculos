@@ -1,7 +1,9 @@
 package com.database.veiculos;
 
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,7 +41,10 @@ public class VeiculoController {
     }
 
     @PostMapping("/veiculos/salvar")
-    public String salvar(@ModelAttribute Veiculo veiculo) {
+    public String salvar(@Valid @ModelAttribute Veiculo veiculo, BindingResult result) {
+        if (result.hasErrors()) {
+            return "form";
+        }
         service.salvar(veiculo);
         return "redirect:/veiculos";
     }
