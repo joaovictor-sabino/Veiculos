@@ -1,50 +1,82 @@
 <!DOCTYPE html>
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <link rel="stylesheet" th:href="@{/css/estilo.css}">
     <meta charset="UTF-8">
-    <title>Lista de veículos</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Veículos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/estilo.css}">
 </head>
 <body>
-    <h1>Lista de veículos</h1>
+<main class="pagina">
 
-    <form th:action="@{/veiculos}" method="get">
-        <input type="text" name="busca" placeholder="Buscar por modelo">
-        <button type="submit">Buscar</button>
-    </form>
+    <header class="topo">
+        <h1>Veículos</h1>
+        <p class="contagem"
+           th:text="${#lists.size(veiculos) == 1} ? '1 veículo' : |${#lists.size(veiculos)} veículos|">0 veículos</p>
+    </header>
 
-    <a th:href="@{/veiculos/novo}">Novo veículo</a>
-    <br><br>
+    <div class="barra">
+        <form class="busca" th:action="@{/veiculos}" method="get" role="search">
+            <label class="sr" for="busca">Buscar por modelo</label>
+            <input id="busca" type="search" name="busca" placeholder="Buscar por modelo"
+                   th:value="${param.busca != null ? param.busca[0] : ''}">
+            <button type="submit" class="botao botao-secundario">Buscar</button>
+        </form>
+        <a class="botao botao-primario" th:href="@{/veiculos/novo}">Novo veículo</a>
+    </div>
 
-    <table border="1">
-        <thead>
+    <div class="tabela-wrap" th:unless="${#lists.isEmpty(veiculos)}">
+        <table class="tabela">
+            <thead>
             <tr>
-                <th>ID</th>
-                <th>Modelo</th>
                 <th>Placa</th>
+                <th>Modelo</th>
                 <th>Ano</th>
                 <th>Cor</th>
-                <th>Ações</th>
+                <th><span class="sr">Ações</span></th>
             </tr>
-        </thead>
-        <tbody>
+            </thead>
+            <tbody>
             <tr th:each="veiculo : ${veiculos}">
-                <td th:text="${veiculo.id}"></td>
-                <td th:text="${veiculo.modelo}"></td>
-                <td th:text="${veiculo.placa}"></td>
-                <td th:text="${veiculo.ano}"></td>
-                <td th:text="${veiculo.cor}"></td>
                 <td>
-                    <a th:href="@{/veiculos/editar/{id}(id=${veiculo.id})}">Editar</a>
-                    <form th:action="@{/veiculos/excluir/{id}(id=${veiculo.id})}"
-                          method="post" style="display:inline">
-                        <button type="submit">Excluir</button>
+                    <span class="placa">
+                        <span class="placa-faixa">BRASIL</span>
+                        <span class="placa-texto" th:text="${veiculo.placa}">ABC1D23</span>
+                    </span>
+                </td>
+                <td class="modelo" th:text="${veiculo.modelo}"></td>
+                <td th:text="${veiculo.ano}"></td>
+                <td>
+                    <span class="cor" th:attr="data-cor=${veiculo.cor}"></span><span th:text="${veiculo.cor}"></span>
+                </td>
+                <td class="acoes">
+                    <a class="link-acao" th:href="@{/veiculos/editar/{id}(id=${veiculo.id})}">Editar</a>
+                    <form th:action="@{/veiculos/excluir/{id}(id=${veiculo.id})}" method="post"
+                          onsubmit="return confirm('Excluir este veículo?');">
+                        <button type="submit" class="link-acao perigo">Excluir</button>
                     </form>
                 </td>
             </tr>
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    </div>
 
-    <p th:if="${#lists.isEmpty(veiculos)}">Nenhum veículo cadastrado.</p>
+    <div class="vazio" th:if="${#lists.isEmpty(veiculos)}">
+        <th:block th:if="${param.busca != null and param.busca[0] != ''}">
+            <h2>Nenhum veículo encontrado</h2>
+            <p>Não há veículos com esse modelo. Tente outro nome.</p>
+            <a class="botao botao-secundario" th:href="@{/veiculos}">Ver todos os veículos</a>
+        </th:block>
+        <th:block th:unless="${param.busca != null and param.busca[0] != ''}">
+            <h2>Nenhum veículo cadastrado</h2>
+            <p>Cadastre o primeiro veículo para ele aparecer aqui.</p>
+            <a class="botao botao-primario" th:href="@{/veiculos/novo}">Novo veículo</a>
+        </th:block>
+    </div>
+
+</main>
 </body>
 </html>

@@ -1,38 +1,81 @@
 <!DOCTYPE html>
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <link rel="stylesheet" th:href="@{/css/estilo.css}">
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Veículo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/estilo.css}">
 </head>
 <body>
-    <h1>Cadastro de veículo</h1>
+<main class="pagina estreita">
 
-    <form th:action="@{/veiculos/salvar}" th:object="${veiculo}" method="post">
+    <a class="voltar" th:href="@{/veiculos}">Voltar para a lista</a>
+    <h1 th:text="${veiculo.id == null} ? 'Novo veículo' : 'Editar veículo'">Novo veículo</h1>
+
+    <form class="cartao" style="margin-top: 20px;"
+          th:action="@{/veiculos/salvar}" th:object="${veiculo}" method="post">
         <input type="hidden" th:field="*{id}">
 
-        <label>Modelo:</label>
-        <input type="text" th:field="*{modelo}" style="text-transform: uppercase">
-        <span class="erro" style="color: red" th:if="${#fields.hasErrors('modelo')}" th:errors="*{modelo}"></span>
-        <br><br>
+        <div class="previa" aria-hidden="true">
+            <span class="placa placa-grande">
+                <span class="placa-faixa">BRASIL</span>
+                <span class="placa-texto" id="previa-placa">ABC1D23</span>
+            </span>
+        </div>
 
-        <label>Placa:</label>
-        <input type="text" th:field="*{placa}" style="text-transform: uppercase">
-        <span class="erro" style="color: red" th:if="${#fields.hasErrors('placa')}" th:errors="*{placa}"></span>
-        <br><br>
+        <div class="campo">
+            <label for="modelo">Modelo</label>
+            <input type="text" th:field="*{modelo}" th:classappend="${#fields.hasErrors('modelo')} ? 'invalido'"
+                   placeholder="Ex.: Gol 1.0" autocomplete="off">
+            <span class="erro" role="alert" th:if="${#fields.hasErrors('modelo')}" th:errors="*{modelo}"></span>
+        </div>
 
-        <label>Ano:</label>
-        <input type="number" th:field="*{ano}">
-        <span class="erro" style="color: red" th:if="${#fields.hasErrors('ano')}" th:errors="*{ano}"></span>
-        <br><br>
+        <div class="linha-dupla">
+            <div class="campo">
+                <label for="placa">Placa</label>
+                <input type="text" th:field="*{placa}" th:classappend="${#fields.hasErrors('placa')} ? 'invalido'"
+                       maxlength="7" placeholder="ABC1D23" autocomplete="off" autocapitalize="characters">
+                <span class="erro" role="alert" th:if="${#fields.hasErrors('placa')}" th:errors="*{placa}"></span>
+            </div>
 
-        <label>Cor:</label>
-        <input type="text" th:field="*{cor}" style="text-transform: uppercase">
-        <span class="erro" style="color: red" th:if="${#fields.hasErrors('cor')}" th:errors="*{cor}"></span>
-        <br><br>
+            <div class="campo">
+                <label for="ano">Ano</label>
+                <input type="number" th:field="*{ano}" th:classappend="${#fields.hasErrors('ano')} ? 'invalido'"
+                       placeholder="2020">
+                <span class="erro" role="alert" th:if="${#fields.hasErrors('ano')}" th:errors="*{ano}"></span>
+            </div>
+        </div>
 
-        <button type="submit">Salvar</button>
-        <a th:href="@{/veiculos}">Cancelar</a>
+        <div class="campo">
+            <label for="cor">Cor</label>
+            <input type="text" th:field="*{cor}" th:classappend="${#fields.hasErrors('cor')} ? 'invalido'"
+                   placeholder="Ex.: Prata" autocomplete="off">
+            <span class="erro" role="alert" th:if="${#fields.hasErrors('cor')}" th:errors="*{cor}"></span>
+        </div>
+
+        <div class="rodape-form">
+            <button type="submit" class="botao botao-primario">Salvar veículo</button>
+            <a class="botao botao-secundario" th:href="@{/veiculos}">Cancelar</a>
+        </div>
     </form>
+
+</main>
+
+<script>
+    const campoPlaca = document.getElementById('placa');
+    const previa = document.getElementById('previa-placa');
+
+    function atualizarPrevia() {
+        const valor = campoPlaca.value.trim().toUpperCase();
+        previa.textContent = valor || 'ABC1D23';
+        previa.classList.toggle('vazia', !valor);
+    }
+
+    campoPlaca.addEventListener('input', atualizarPrevia);
+    atualizarPrevia();
+</script>
 </body>
 </html>
